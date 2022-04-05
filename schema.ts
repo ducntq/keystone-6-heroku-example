@@ -75,9 +75,8 @@ export const lists = {
       author: relationship({
         ref: 'Person.posts',
         ui: {
-          displayMode: 'cards',
-          cardFields: ['name', 'email'],
-          inlineEdit: { fields: ['name', 'email'] },
+          displayMode: 'select',
+          labelField: 'name',
           linkToItem: true,
         },
       }),
