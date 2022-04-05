@@ -176,6 +176,13 @@ type Person {
     skip: Int! = 0
   ): [Task!]
   tasksCount(where: TaskWhereInput! = {}): Int
+  posts(
+    where: PostWhereInput! = {}
+    orderBy: [PostOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Post!]
+  postsCount(where: PostWhereInput! = {}): Int
 }
 
 type PasswordState {
@@ -196,6 +203,7 @@ input PersonWhereInput {
   email: StringFilter
   password: PasswordFilter
   tasks: TaskManyRelationFilter
+  posts: PostManyRelationFilter
 }
 
 input PasswordFilter {
@@ -206,6 +214,12 @@ input TaskManyRelationFilter {
   every: TaskWhereInput
   some: TaskWhereInput
   none: TaskWhereInput
+}
+
+input PostManyRelationFilter {
+  every: PostWhereInput
+  some: PostWhereInput
+  none: PostWhereInput
 }
 
 input PersonOrderByInput {
@@ -219,6 +233,7 @@ input PersonUpdateInput {
   email: String
   password: String
   tasks: TaskRelateToManyForUpdateInput
+  posts: PostRelateToManyForUpdateInput
 }
 
 input TaskRelateToManyForUpdateInput {
@@ -226,6 +241,13 @@ input TaskRelateToManyForUpdateInput {
   set: [TaskWhereUniqueInput!]
   create: [TaskCreateInput!]
   connect: [TaskWhereUniqueInput!]
+}
+
+input PostRelateToManyForUpdateInput {
+  disconnect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
+  create: [PostCreateInput!]
+  connect: [PostWhereUniqueInput!]
 }
 
 input PersonUpdateArgs {
@@ -238,11 +260,73 @@ input PersonCreateInput {
   email: String
   password: String
   tasks: TaskRelateToManyForCreateInput
+  posts: PostRelateToManyForCreateInput
 }
 
 input TaskRelateToManyForCreateInput {
   create: [TaskCreateInput!]
   connect: [TaskWhereUniqueInput!]
+}
+
+input PostRelateToManyForCreateInput {
+  create: [PostCreateInput!]
+  connect: [PostWhereUniqueInput!]
+}
+
+type Post {
+  id: ID!
+  title: String
+  status: String
+  content: Post_content_Document
+  publishDate: DateTime
+  author: Person
+}
+
+type Post_content_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
+}
+
+input PostWhereUniqueInput {
+  id: ID
+}
+
+input PostWhereInput {
+  AND: [PostWhereInput!]
+  OR: [PostWhereInput!]
+  NOT: [PostWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  status: StringNullableFilter
+  publishDate: DateTimeNullableFilter
+  author: PersonWhereInput
+}
+
+input PostOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  status: OrderDirection
+  publishDate: OrderDirection
+}
+
+input PostUpdateInput {
+  title: String
+  status: String
+  content: JSON
+  publishDate: DateTime
+  author: PersonRelateToOneForUpdateInput
+}
+
+input PostUpdateArgs {
+  where: PostWhereUniqueInput!
+  data: PostUpdateInput!
+}
+
+input PostCreateInput {
+  title: String
+  status: String
+  content: JSON
+  publishDate: DateTime
+  author: PersonRelateToOneForCreateInput
 }
 
 """
@@ -266,6 +350,12 @@ type Mutation {
   updatePeople(data: [PersonUpdateArgs!]!): [Person]
   deletePerson(where: PersonWhereUniqueInput!): Person
   deletePeople(where: [PersonWhereUniqueInput!]!): [Person]
+  createPost(data: PostCreateInput!): Post
+  createPosts(data: [PostCreateInput!]!): [Post]
+  updatePost(where: PostWhereUniqueInput!, data: PostUpdateInput!): Post
+  updatePosts(data: [PostUpdateArgs!]!): [Post]
+  deletePost(where: PostWhereUniqueInput!): Post
+  deletePosts(where: [PostWhereUniqueInput!]!): [Post]
   endSession: Boolean!
   authenticatePersonWithPassword(
     email: String!
@@ -312,6 +402,14 @@ type Query {
   ): [Person!]
   person(where: PersonWhereUniqueInput!): Person
   peopleCount(where: PersonWhereInput! = {}): Int
+  posts(
+    where: PostWhereInput! = {}
+    orderBy: [PostOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Post!]
+  post(where: PostWhereUniqueInput!): Post
+  postsCount(where: PostWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

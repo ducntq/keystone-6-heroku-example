@@ -13,11 +13,13 @@
   "scripts": {
     "dev": "keystone dev",
     "start": "keystone start",
-    "build": "keystone build && keystone prisma migrate deploy"
+    "build": "keystone build && keystone prisma migrate deploy",
+    "postinstall": "keystone postinstall"
   },
   "dependencies": {
     "@keystone-6/auth": "^1.0.0",
-    "@keystone-6/core": "^1.0.0"
+    "@keystone-6/core": "^1.0.0",
+    "@keystone-6/fields-document": "^2.0.0"
   },
   "devDependencies": {
     "typescript": "^4.5.2"

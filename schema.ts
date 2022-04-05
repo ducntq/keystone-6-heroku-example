@@ -3,6 +3,7 @@
 
 import { list } from '@keystone-6/core';
 import { checkbox, password, relationship, text, timestamp, select } from '@keystone-6/core/fields';
+import { document } from '@keystone-6/fields-document';
 
 export const lists = {
   Task: list({
@@ -33,6 +34,53 @@ export const lists = {
       // the isRequired flag.
       password: password({ isRequired: true }),
       tasks: relationship({ ref: 'Task.assignedTo', many: true }),
+      posts: relationship({ ref: 'Post.author', many: true }),
+    },
+  }),
+  Post: list({
+    fields: {
+      title: text(),
+      // Having the status here will make it easy for us to choose whether to display
+      // posts on a live site.
+      status: select({
+        options: [
+          { label: 'Published', value: 'published' },
+          { label: 'Draft', value: 'draft' },
+        ],
+        // We want to make sure new posts start off as a draft when they are created
+        defaultValue: 'draft',
+        // fields also have the ability to configure their appearance in the Admin UI
+        ui: {
+          displayMode: 'segmented-control',
+        },
+      }),
+      // The document field can be used for making highly editable content. Check out our
+      // guide on the document field https://keystonejs.com/docs/guides/document-fields#how-to-use-document-fields
+      // for more information
+      content: document({
+        formatting: true,
+        layouts: [
+          [1, 1],
+          [1, 1, 1],
+          [2, 1],
+          [1, 2],
+          [1, 2, 1],
+        ],
+        links: true,
+        dividers: true,
+      }),
+      publishDate: timestamp(),
+      // Here is the link from post => author.
+      // We've configured its UI display quite a lot to make the experience of editing posts better.
+      author: relationship({
+        ref: 'Person.posts',
+        ui: {
+          displayMode: 'cards',
+          cardFields: ['name', 'email'],
+          inlineEdit: { fields: ['name', 'email'] },
+          linkToItem: true,
+        },
+      }),
     },
   }),
 };
